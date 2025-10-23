@@ -40,7 +40,11 @@ class AuthController extends Controller
 				return redirect()->route('production.dashboard')->with('success', 'Login berhasil!');
 			}
 
-			// Fallback redirect if department doesn't match
+			// Fallback: logout user if department doesn't match
+			Auth::logout();
+			$request->session()->invalidate();
+			$request->session()->regenerateToken();
+
 			return redirect('/login')->with('error', 'Department tidak valid.');
 		}
 
