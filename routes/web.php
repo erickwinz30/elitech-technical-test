@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +15,27 @@ use Inertia\Inertia;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+// Guest routes (not authenticated)
+Route::middleware('guest')->group(function () {
+	Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+	Route::post('/login', [AuthController::class, 'login']);
+});
 
-Route::get('/', function () {
-    // Hapus baris ini: return view('welcome');
+// PPIC Routes - Only accessible by users with department 'ppic'
+Route::middleware('ppic')->group(function () {
+	Route::get('/ppic', function () {
+		return Inertia::render('PPIC/Dashboard');
+	})->name('ppic.dashboard');
+});
 
-    // Ganti dengan ini:
-    return Inertia::render('Welcome'); // 'Welcome' merujuk ke 'resources/js/Pages/Welcome.vue'
+// Production Routes - Only accessible by users with department 'production'
+Route::middleware('production')->group(function () {
+	Route::get('/production', function () {
+		return Inertia::render('Production/Dashboard');
+	})->name('production.dashboard');
+});
+
+// Shared authenticated routes (accessible by all authenticated users)
+Route::middleware('auth')->group(function () {
+	Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

@@ -1,4 +1,10 @@
-<script setup></script>
+<script setup>
+import { router } from "@inertiajs/vue3";
+
+const logout = () => {
+	router.post("/logout");
+};
+</script>
 
 <template>
 	<!-- ======= Header ======= -->
@@ -43,8 +49,8 @@
 						<li>
 							<a
 								class="dropdown-item d-flex align-items-center"
-								href="/logout"
-								onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+								href="#"
+								@click.prevent="logout"
 							>
 								<i class="bi bi-box-arrow-right"></i>
 								<span>Log Out</span>
@@ -57,10 +63,6 @@
 			</ul>
 		</nav>
 		<!-- End Icons Navigation -->
-
-		<form id="logout-form" action="/logout" method="POST" style="display: none">
-			<!-- Add CSRF token if needed -->
-		</form>
 	</header>
 	<!-- End Header -->
 </template>
