@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,10 @@ Route::middleware('ppic')->group(function () {
 	Route::get('/ppic', function () {
 		return Inertia::render('PPIC/Dashboard');
 	})->name('ppic.dashboard');
+
+	Route::get('/ppic/products', [ProductController::class, 'index'])->name('ppic.products');
+	Route::post('/ppic/products', [ProductController::class, 'store'])->name('ppic.products.store');
+	Route::delete('/ppic/products/{product}', [ProductController::class, 'destroy'])->name('ppic.products.destroy');
 });
 
 // Production Routes - Only accessible by users with department 'production'

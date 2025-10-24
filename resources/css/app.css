@@ -1,3 +1,14 @@
+@import url("datatables.net-bs5");
+@import url("datatables.net-buttons-bs5");
+@import url("datatables.net-columncontrol-bs5");
+@import url("datatables.net-keytable-bs5");
+@import url("datatables.net-responsive-bs5");
+@import url("datatables.net-rowgroup-bs5");
+@import url("datatables.net-scroller-bs5");
+@import url("datatables.net-searchbuilder-bs5");
+@import url("datatables.net-searchpanes-bs5");
+@import url("datatables.net-select-bs5");
+
 /**
 * Template Name: NiceAdmin
 * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/

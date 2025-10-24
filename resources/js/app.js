@@ -22,6 +22,32 @@ import "../vendor/simple-datatables/simple-datatables.js";
 import "../vendor/tinymce/tinymce.min.js";
 import "../vendor/php-email-form/validate.js";
 
+// datatables
+import jQuery from "jquery";
+import jszip from "jszip";
+import pdfmake from "pdfmake";
+import DataTable from "datatables.net-vue3";
+import DataTablesCore from "datatables.net-bs5";
+import "datatables.net-buttons-bs5";
+import "datatables.net-buttons/js/buttons.colVis.mjs";
+import "datatables.net-buttons/js/buttons.html5.mjs";
+import "datatables.net-columncontrol-bs5";
+import DateTime from "datatables.net-datetime";
+import "datatables.net-keytable-bs5";
+import "datatables.net-responsive-bs5";
+import "datatables.net-rowgroup-bs5";
+import "datatables.net-scroller-bs5";
+import "datatables.net-searchbuilder-bs5";
+import "datatables.net-searchpanes-bs5";
+import "datatables.net-select-bs5";
+
+//sweetalert2
+import Swal from "sweetalert2";
+
+DataTablesCore.Buttons.jszip(jszip);
+DataTablesCore.Buttons.pdfMake(pdfmake);
+DataTable.use(DataTablesCore);
+
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 
