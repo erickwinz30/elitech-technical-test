@@ -16,7 +16,14 @@ class ProductController extends Controller
 	public function index()
 	{
 		$products = Product::where('is_deleted', false)->get();
-		return Inertia::render('PPIC/Product', ['products' => $products]);
+
+		return Inertia::render('PPIC/Product', [
+			'products' => $products,
+			'flash' => [
+				'success' => session('success'),
+				'error' => session('error'),
+			]
+		]);
 	}
 
 	/**
@@ -40,12 +47,19 @@ class ProductController extends Controller
 				'product_name' => 'required|max:100',
 				'description' => 'nullable|max:255',
 			]);
+
 			Product::create($validatedData);
 			DB::commit();
+
+			return redirect('/ppic/products')->with('success', 'Produk berhasil ditambahkan!');
+		} catch (\Illuminate\Validation\ValidationException $e) {
+			DB::rollBack();
+			Log::error('Validasi gagal: ' . json_encode($e->errors()));
+			return redirect()->back()->with('error', 'Validasi gagal: ' . json_encode($e->errors()));
 		} catch (\Exception $e) {
 			DB::rollBack();
 			Log::error('Gagal menyimpan produk: ' . $e->getMessage());
-			// Handle the error
+			return redirect()->back()->with('error', 'Gagal menyimpan produk: ' . $e->getMessage());
 		}
 	}
 
@@ -85,8 +99,12 @@ class ProductController extends Controller
 			$product->is_deleted = true;
 			$product->save();
 			DB::commit();
+
+			return redirect()->route('ppic.products.index')->with('success', 'Produk berhasil dihapus!');
 		} catch (\Exception $e) {
 			DB::rollBack();
+			Log::error('Gagal menghapus produk: ' . $e->getMessage());
+			return redirect()->back()->with('error', 'Gagal menghapus produk: ' . $e->getMessage());
 		}
 	}
 }

@@ -7,11 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
+	use HasFactory;
 
-    protected $fillable = [
-        'product_code',
-        'product_name',
-        'description',
-    ];
+	protected $fillable = [
+		'product_code',
+		'product_name',
+		'description',
+	];
+
+	public function productionPlans()
+	{
+		return $this->hasMany(ProductionPlan::class);
+	}
 }

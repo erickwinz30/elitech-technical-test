@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { defineProps, ref, Ref, onMounted } from "vue";
+import DefaultLayout from "../Layout/DefaultLayout.vue";
+import Alert from "../Components/Alert.vue";
+
+import { defineProps, ref, Ref, computed } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 
-import DefaultLayout from "../Layout/DefaultLayout.vue";
 import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.css";
@@ -27,9 +29,13 @@ interface ProductForm {
 
 const props = defineProps<{
 	products?: Product[];
+	flash?: {
+		success?: string;
+		error?: string;
+	};
 }>();
 
-const products: Ref<Product[] | undefined> = ref(props.products);
+const products = computed(() => props.products || []);
 
 // DataTable columns configuration
 const columns = [
@@ -117,6 +123,9 @@ console.log(products);
 			</nav>
 		</div>
 
+		<Alert v-if="flash?.success" :message="flash.success" type="success" />
+		<Alert v-if="flash?.error" :message="flash.error" type="error" />
+
 		<section class="section">
 			<div class="row justify-content-center">
 				<div class="col-lg-12">
@@ -140,7 +149,7 @@ console.log(products);
 
 							<div class="table-responsive p-3">
 								<DataTable
-									:data="products || []"
+									:data="products"
 									:columns="columns"
 									class="table table-striped table-hover"
 								>

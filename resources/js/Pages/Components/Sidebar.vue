@@ -1,4 +1,20 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
+
+const page = usePage();
+const currentUrl = computed(() => page.url);
+
+// Function untuk check apakah route sedang aktif
+const isActiveRoute = (route: string) => {
+	return currentUrl.value === route || currentUrl.value.startsWith(route);
+};
+
+// Function untuk mendapatkan class nav-link
+const getNavLinkClass = (route: string) => {
+	return isActiveRoute(route) ? "nav-link" : "nav-link collapsed";
+};
+</script>
 
 <template>
 	<aside id="sidebar" class="sidebar">
@@ -6,14 +22,14 @@
 			<li class="nav-heading">PPIC</li>
 
 			<li class="nav-item">
-				<a class="nav-link" href="/ppic/production-planning">
+				<a :class="getNavLinkClass('/ppic/planning')" href="/ppic/planning">
 					<i class="bi bi-graph-up"></i>
 					<span>Perencanaan</span>
 				</a>
 			</li>
 
 			<li class="nav-item">
-				<a class="nav-link" href="/ppic/products">
+				<a :class="getNavLinkClass('/ppic/products')" href="/ppic/products">
 					<i class="bi bi-list-ul"></i>
 					<span>Daftar Produk</span>
 				</a>

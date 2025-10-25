@@ -53,5 +53,17 @@ class DatabaseSeeder extends Seeder
 			'product_name' => 'Patient Monitor',
 			'description' => 'Alat monitor pasien pada rumah sakit',
 		]);
+
+		Product::create([
+			'product_code' => 'PM002',
+			'product_name' => 'Infusion Pump',
+			'description' => 'Alat pompa infus untuk rumah sakit',
+		]);
+
+		Product::create([
+			'product_code' => 'ECG001',
+			'product_name' => 'ECG Machine',
+			'description' => 'Alat untuk merekam aktivitas listrik jantung',
+		]);
 	}
 }

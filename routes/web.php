@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductionPlanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,11 @@ Route::middleware('ppic')->group(function () {
 	Route::get('/ppic/products', [ProductController::class, 'index'])->name('ppic.products');
 	Route::post('/ppic/products', [ProductController::class, 'store'])->name('ppic.products.store');
 	Route::delete('/ppic/products/{product}', [ProductController::class, 'destroy'])->name('ppic.products.destroy');
+
+	Route::get('/ppic/planning', [ProductionPlanController::class, 'index'])->name('ppic.planning');
+	Route::post('/ppic/planning', [ProductionPlanController::class, 'store'])->name('ppic.planning.store');
+	Route::post('/ppic/planning/approve/{planning}', [ProductionPlanController::class, 'approve'])->name('ppic.planning.approve');
+	Route::post('/ppic/planning/reject/{planning}', [ProductionPlanController::class, 'reject'])->name('ppic.planning.reject');
 });
 
 // Production Routes - Only accessible by users with department 'production'
