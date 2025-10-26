@@ -9,6 +9,8 @@ class ProductionLog extends Model
 {
     use HasFactory;
 
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'production_order_id',
         'changed_by',

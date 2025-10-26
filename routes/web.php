@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductionPlanController;
+use App\Http\Controllers\ProductionOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,10 @@ Route::middleware('production')->group(function () {
 	Route::get('/production', function () {
 		return Inertia::render('Production/Dashboard');
 	})->name('production.dashboard');
+
+	Route::get('/production/orders', [ProductionOrderController::class, 'index'])->name('production.orders');
+	Route::post('/production/orders/start-production/{productionOrder}', [ProductionOrderController::class, 'startProduction'])->name('production.orders.start');
+	Route::post('/production/orders/complete-production/{productionOrder}', [ProductionOrderController::class, 'completeProduction'])->name('production.orders.complete');
 });
 
 // Shared authenticated routes (accessible by all authenticated users)

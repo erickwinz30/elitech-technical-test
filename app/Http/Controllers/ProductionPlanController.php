@@ -17,7 +17,7 @@ class ProductionPlanController extends Controller
 	 */
 	public function index()
 	{
-		$productionPlans = ProductionPlan::with(['product', 'creator', 'approver'])->get();
+		$productionPlans = ProductionPlan::with(['product', 'creator', 'approver', 'productionOrder'])->get();
 		$products = Product::all();
 		$user = auth()->user();
 

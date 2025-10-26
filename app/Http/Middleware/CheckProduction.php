@@ -20,8 +20,16 @@ class CheckProduction
 			return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
 		}
 
+		$user = auth()->user();
+
+		// Manager bisa akses semua department
+		// Staff hanya bisa akses department mereka sendiri
+		if ($user->role === 'manager') {
+			return $next($request);
+		}
+
 		// Check if user's department is 'production'
-		if (auth()->user()->department !== 'production') {
+		if ($user->department !== 'production') {
 			return redirect('/login')->with('error', 'Akses ditolak. Anda tidak memiliki akses ke halaman Production.');
 		}
 

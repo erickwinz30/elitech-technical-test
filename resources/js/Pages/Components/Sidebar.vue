@@ -35,16 +35,19 @@ const getNavLinkClass = (route: string) => {
 				</a>
 			</li>
 
-			<!-- <li class="nav-heading">Admin</li>
+			<li class="nav-heading">Produksi</li>
 
 			<li class="nav-item">
-				<a class="nav-link" href="/">
+				<a
+					:class="getNavLinkClass('/production/orders')"
+					href="/production/orders"
+				>
 					<i class="bi bi-speedometer"></i>
-					<span>Dashboard</span>
+					<span>Order Produksi</span>
 				</a>
 			</li>
 
-			<li class="nav-item">
+			<!-- <li class="nav-item">
 				<a class="nav-link" href="/users">
 					<i class="bi bi-person-gear"></i>
 					<span>User</span>

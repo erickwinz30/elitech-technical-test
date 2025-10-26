@@ -40,6 +40,12 @@ interface Planning {
 		name: string;
 		email?: string;
 	};
+	production_order?: {
+		id: number;
+		status: "pending" | "in_progress" | "completed";
+		actual_quantity: number | null;
+		rejected_quantity: number;
+	} | null;
 }
 
 interface Product {
@@ -141,6 +147,29 @@ const columns = computed(() => [
 				rejected: '<span class="badge bg-danger">Ditolak</span>',
 			};
 			return badges[data] || data;
+		},
+	},
+	{
+		data: "production_order",
+		title: "Progress Produksi",
+		render: (data: any, type: any, row: any) => {
+			// Jika planning belum approved, tidak ada production order
+			if (row.status !== "approved") {
+				return '<span class="text-muted">-</span>';
+			}
+
+			// Jika approved tapi belum ada production order (data null)
+			if (!data) {
+				return '<span class="badge bg-secondary">Belum Dibuat</span>';
+			}
+
+			// Tampilkan status production order
+			const badges: Record<string, string> = {
+				pending: '<span class="badge bg-warning">Pending</span>',
+				in_progress: '<span class="badge bg-primary">Sedang Dikerjakan</span>',
+				completed: '<span class="badge bg-success">Selesai</span>',
+			};
+			return badges[data.status] || data.status;
 		},
 	},
 	{
@@ -294,7 +323,8 @@ const rejectPlan = (planningId: number) => {
 											<th>Jumlah Rencana</th>
 											<th>Target Deadline</th>
 											<th>Tanggal Persetujuan / Penolakan</th>
-											<th>Status</th>
+											<th>Status Planning</th>
+											<th>Progress Produksi</th>
 											<th>Aksi</th>
 										</tr>
 									</thead>

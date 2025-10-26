@@ -34,6 +34,8 @@ class AuthController extends Controller
 			// Redirect based on user's department
 			$user = Auth::user();
 
+			// Manager bisa akses semua, redirect ke department mereka sebagai default
+			// Tapi mereka tetap bisa switch ke department lain via sidebar
 			if ($user->department === 'ppic') {
 				return redirect()->route('ppic.dashboard')->with('success', 'Login berhasil!');
 			} elseif ($user->department === 'production') {
