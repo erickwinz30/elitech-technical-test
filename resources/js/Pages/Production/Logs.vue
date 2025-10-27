@@ -190,6 +190,7 @@ const columns = computed(() => [
 ]);
 
 const options = {
+	dom: "Blfrtip",
 	buttons: [
 		{
 			extend: "copy",

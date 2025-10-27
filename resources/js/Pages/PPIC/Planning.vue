@@ -343,13 +343,14 @@ const rejectPlan = (planningId: number) => {
 (window as any).rejectPlan = rejectPlan;
 
 const options = {
+	dom: "Blfrtip",
 	buttons: [
 		{
 			extend: "copy",
 			text: '<i class="bi bi-files me-1"></i> Copy',
 			className: "btn btn-secondary btn-sm",
 			exportOptions: {
-				columns: ":not(:last-child)", // Exclude action column
+				columns: ":not(:last-child)",
 			},
 		},
 		{
@@ -607,23 +608,3 @@ const options = {
 		</section>
 	</default-layout>
 </template>
-
-<!-- <style scoped>
-:deep(.dt-buttons) {
-	margin-bottom: 1rem;
-	display: flex;
-	gap: 0.5rem;
-	flex-wrap: wrap;
-}
-
-:deep(.dt-buttons .btn) {
-	display: inline-flex;
-	align-items: center;
-	padding: 0.375rem 0.75rem;
-	font-size: 0.875rem;
-}
-
-:deep(.dt-buttons .btn i) {
-	font-size: 1rem;
-}
-</style> -->
