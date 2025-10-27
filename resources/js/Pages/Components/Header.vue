@@ -1,8 +1,21 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user || page.props.user);
 
 const logout = () => {
 	router.post("/logout");
+};
+
+const getRoleLabel = (role) => {
+	const roleLabels = {
+		manager: "Manager",
+		staff: "Staff",
+	};
+	return roleLabels[role] || role;
 };
 </script>
 
@@ -29,9 +42,9 @@ const logout = () => {
 						href="#"
 						data-bs-toggle="dropdown"
 					>
-						<span class="d-none d-md-block dropdown-toggle ps-2"
-							>Test Admin</span
-						>
+						<span class="d-none d-md-block dropdown-toggle ps-2">
+							{{ user?.name || "Guest" }}
+						</span>
 					</a>
 					<!-- End Profile Image Icon -->
 
@@ -39,8 +52,8 @@ const logout = () => {
 						class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
 					>
 						<li class="dropdown-header">
-							<h6>Test Admin</h6>
-							<span>Administrator</span>
+							<h6>{{ user?.name || "Guest" }}</h6>
+							<span>{{ getRoleLabel(user?.role) }}</span>
 						</li>
 						<li>
 							<hr class="dropdown-divider" />

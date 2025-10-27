@@ -130,4 +130,17 @@ class ProductionOrderController extends Controller
 			return redirect()->back()->with('error', 'Gagal menyelesaikan produksi: ' . $e->getMessage());
 		}
 	}
+
+	public function logs()
+	{
+		$logs = ProductionLog::with(['productionOrder.productionPlan.product', 'changedBy'])->orderBy('created_at', 'desc')->get();
+
+		return Inertia::render('Production/Logs', [
+			'logs' => $logs,
+			'flash' => [
+				'success' => session('success'),
+				'error' => session('error'),
+			]
+		]);
+	}
 }

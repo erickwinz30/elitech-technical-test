@@ -9,9 +9,20 @@ import DataTable from "datatables.net-vue3";
 import DataTablesCore from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.css";
 
+import "datatables.net-buttons-bs5";
+import "datatables.net-buttons/js/buttons.html5";
+import "datatables.net-buttons/js/buttons.print";
+import "datatables.net-buttons-bs5/css/buttons.bootstrap5.css";
+
+import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from "pdfmake/build/vfs_fonts";
+import JSZip from "jszip";
+
+(pdfMake as any).vfs = pdfFonts;
+(window as any).JSZip = JSZip;
+
 import Swal from "sweetalert2";
 
-// Register DataTables with Vue component
 DataTable.use(DataTablesCore);
 
 interface Planning {
@@ -24,12 +35,9 @@ interface Planning {
 	deadline: string | null;
 	approval_at: string | null;
 	notes: string | null;
-	product?: {
-		id: number;
-		product_code: string;
-		product_name: string;
-		description: string;
-	};
+	created_at: string;
+	updated_at: string;
+	product?: Product;
 	creator?: {
 		id: string;
 		name: string;
@@ -49,7 +57,7 @@ interface Planning {
 }
 
 interface Product {
-	id: number; // Ubah dari string ke number karena Laravel kirim sebagai int
+	id: number;
 	product_code: string;
 	product_name: string;
 	description: string;
@@ -81,7 +89,41 @@ const props = defineProps<{
 // Gunakan computed agar reaktif terhadap perubahan props
 const plannings = computed(() => props.plannings || []);
 
-// Check apakah user adalah Manager PPIC
+// State untuk filter tanggal
+const filterStartDate = ref<string>("");
+const filterEndDate = ref<string>("");
+
+// Computed untuk plannings yang sudah difilter
+const filteredPlannings = computed(() => {
+	let result = plannings.value;
+
+	// Filter berdasarkan tanggal dibuat (created_at)
+	if (filterStartDate.value) {
+		const startDate = new Date(filterStartDate.value);
+		startDate.setHours(0, 0, 0, 0);
+		result = result.filter((planning) => {
+			const createdDate = new Date(planning.created_at);
+			return createdDate >= startDate;
+		});
+	}
+
+	if (filterEndDate.value) {
+		const endDate = new Date(filterEndDate.value);
+		endDate.setHours(23, 59, 59, 999);
+		result = result.filter((planning) => {
+			const createdDate = new Date(planning.created_at);
+			return createdDate <= endDate;
+		});
+	}
+
+	return result;
+});
+
+const resetFilter = () => {
+	filterStartDate.value = "";
+	filterEndDate.value = "";
+};
+
 const isManagerPPIC = computed(() => {
 	return props.user?.role === "manager" && props.user?.department === "ppic";
 });
@@ -90,7 +132,30 @@ console.log("Products from backend:", props.products);
 console.log("Plannings from backend:", props.plannings);
 console.log("Is Manager PPIC:", isManagerPPIC.value);
 
-// DataTable columns configuration sebagai computed
+const formatDateTime = (dateString: string | null): string => {
+	if (!dateString) return "-";
+
+	const date = new Date(dateString);
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	const hours = String(date.getHours()).padStart(2, "0");
+	const minutes = String(date.getMinutes()).padStart(2, "0");
+
+	return `${day}/${month}/${year}, ${hours}:${minutes}`;
+};
+
+const formatDate = (dateString: string | null): string => {
+	if (!dateString) return "-";
+
+	const date = new Date(dateString);
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+
+	return `${day}/${month}/${year}`;
+};
+
 const columns = computed(() => [
 	{
 		data: null,
@@ -122,18 +187,24 @@ const columns = computed(() => [
 	},
 	{ data: "planned_quantity", title: "Jumlah Rencana Produksi" },
 	{
+		data: "created_at",
+		title: "Tanggal Dibuat",
+		render: (data: any) => {
+			return formatDateTime(data);
+		},
+	},
+	{
 		data: "deadline",
 		title: "Target Deadline",
 		render: (data: any) => {
-			return data || "-";
+			return formatDate(data);
 		},
 	},
 	{
 		data: "approval_at",
 		title: "Tanggal Persetujuan / Penolakan",
 		render: (data: any) => {
-			// data di sini SUDAH value dari approval_at (string atau null)
-			return data || "-";
+			return formatDateTime(data);
 		},
 	},
 	{
@@ -270,6 +341,48 @@ const rejectPlan = (planningId: number) => {
 // Expose functions ke window
 (window as any).approvePlan = approvePlan;
 (window as any).rejectPlan = rejectPlan;
+
+const options = {
+	buttons: [
+		{
+			extend: "copy",
+			text: '<i class="bi bi-files me-1"></i> Copy',
+			className: "btn btn-secondary btn-sm",
+			exportOptions: {
+				columns: ":not(:last-child)", // Exclude action column
+			},
+		},
+		{
+			extend: "excel",
+			text: '<i class="bi bi-file-earmark-excel me-1"></i> Excel',
+			className: "btn btn-success btn-sm",
+			exportOptions: {
+				columns: ":not(:last-child)",
+			},
+			title: "Daftar Rencana Produksi",
+		},
+		{
+			extend: "pdf",
+			text: '<i class="bi bi-file-earmark-pdf me-1"></i> PDF',
+			className: "btn btn-danger btn-sm",
+			exportOptions: {
+				columns: ":not(:last-child)",
+			},
+			title: "Daftar Rencana Produksi",
+			orientation: "landscape",
+			pageSize: "A4",
+		},
+		{
+			extend: "print",
+			text: '<i class="bi bi-printer me-1"></i> Print',
+			className: "btn btn-info btn-sm",
+			exportOptions: {
+				columns: ":not(:last-child)",
+			},
+			title: "Daftar Rencana Produksi",
+		},
+	],
+};
 </script>
 <template>
 	<default-layout>
@@ -308,10 +421,61 @@ const rejectPlan = (planningId: number) => {
 								</div>
 							</div>
 
+							<!-- Filter Section -->
+							<div class="mb-3 p-3 bg-light rounded">
+								<div class="row align-items-end">
+									<div class="col-md-4">
+										<label for="filter_start_date" class="form-label">
+											<i class="bi bi-calendar-event me-1"></i>
+											Tanggal Mulai
+										</label>
+										<input
+											type="date"
+											class="form-control"
+											id="filter_start_date"
+											v-model="filterStartDate"
+										/>
+									</div>
+									<div class="col-md-4">
+										<label for="filter_end_date" class="form-label">
+											<i class="bi bi-calendar-event me-1"></i>
+											Tanggal Akhir
+										</label>
+										<input
+											type="date"
+											class="form-control"
+											id="filter_end_date"
+											v-model="filterEndDate"
+										/>
+									</div>
+									<div class="col-md-4">
+										<button
+											type="button"
+											class="btn btn-secondary"
+											@click="resetFilter"
+										>
+											<i class="bi bi-arrow-clockwise me-1"></i>
+											Reset Filter
+										</button>
+									</div>
+								</div>
+								<div
+									class="mt-2 text-muted"
+									v-if="filterStartDate || filterEndDate"
+								>
+									<small>
+										<i class="bi bi-info-circle me-1"></i>
+										Menampilkan {{ filteredPlannings.length }} dari
+										{{ plannings.length }} data
+									</small>
+								</div>
+							</div>
+
 							<div class="table-responsive p-3">
 								<DataTable
-									:data="plannings"
+									:data="filteredPlannings"
 									:columns="columns"
+									:options="options"
 									class="table table-striped table-hover"
 								>
 									<thead>
@@ -443,3 +607,23 @@ const rejectPlan = (planningId: number) => {
 		</section>
 	</default-layout>
 </template>
+
+<!-- <style scoped>
+:deep(.dt-buttons) {
+	margin-bottom: 1rem;
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+:deep(.dt-buttons .btn) {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.375rem 0.75rem;
+	font-size: 0.875rem;
+}
+
+:deep(.dt-buttons .btn i) {
+	font-size: 1rem;
+}
+</style> -->

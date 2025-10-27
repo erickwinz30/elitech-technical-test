@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductionPlanController;
 use App\Http\Controllers\ProductionOrderController;
+use App\Http\Controllers\ProductionLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,8 @@ Route::middleware('production')->group(function () {
 	Route::get('/production/orders', [ProductionOrderController::class, 'index'])->name('production.orders');
 	Route::post('/production/orders/start-production/{productionOrder}', [ProductionOrderController::class, 'startProduction'])->name('production.orders.start');
 	Route::post('/production/orders/complete-production/{productionOrder}', [ProductionOrderController::class, 'completeProduction'])->name('production.orders.complete');
+
+	Route::get('/production/logs', [ProductionLogController::class, 'index'])->name('production.logs');
 });
 
 // Shared authenticated routes (accessible by all authenticated users)

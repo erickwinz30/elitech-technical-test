@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
 		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 		$managerPPIC = User::create([
-			'name' => 'Manager PPIC',
+			'name' => 'Manager 1',
 			'username' => 'manager1',
 			'password' => bcrypt('manager1'),
 			'role' => 'manager',
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
 		]);
 
 		$managerProduction = User::create([
-			'name' => 'Manager Production',
+			'name' => 'Manager 2',
 			'username' => 'manager2',
 			'password' => bcrypt('manager2'),
 			'role' => 'manager',
