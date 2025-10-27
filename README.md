@@ -1,66 +1,210 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Production Management System - Elitech
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem manajemen produksi berbasis web menggunakan Laravel 10, Inertia.js, dan Vue 3 dengan TypeScript.
 
-## About Laravel
+## Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### PPIC (Production Planning and Inventory Control)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Perencanaan Produksi**: Membuat, menyetujui, dan menolak rencana produksi
+- **Manajemen Produk**: CRUD produk dengan soft delete
+- **Persetujuan Manager**: Workflow approval untuk rencana produksi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Production
 
-## Learning Laravel
+- **Order Produksi**: Memulai dan menyelesaikan order produksi
+- **Status Tracking**: Pending, In Progress, Completed
+- **Production Logs**: Riwayat perubahan status produksi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Fitur Umum
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Authentication**: Role-based (Manager/Staff) dan Department-based (PPIC/Production)
+- **DataTables**: Export ke PDF, Excel, Copy, dan Print
+- **Filter**: Filter berdasarkan tanggal
+- **Responsive Design**: Bootstrap 5 dengan NiceAdmin template
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Requirements
 
-## Laravel Sponsors
+- PHP >= 8.1
+- Composer
+- Node.js >= 16.x
+- NPM atau Yarn
+- MySQL/MariaDB
+- Laragon (opsional, untuk development di Windows)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Instalasi
 
-### Premium Partners
+### 1. Clone Repository
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+```bash
+git clone https://github.com/erickwinz30/elitech-technical-test.git
+cd elitech-technical-test
+```
 
-## Contributing
+### 2. Install Dependencies
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Install PHP dependencies
+composer install
 
-## Code of Conduct
+# Install JavaScript dependencies
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Konfigurasi Environment
 
-## Security Vulnerabilities
+```bash
+# Copy file .env.example
+copy .env.example .env
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Generate application key
+php artisan key:generate
+```
+
+### 4. Konfigurasi Database
+
+Edit file `.env` dan sesuaikan dengan database Anda:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=elitech_production
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Migrasi Database dan Seeding
+
+```bash
+# Jalankan migrasi
+php artisan migrate
+
+# Jalankan seeder untuk data dummy
+php artisan db:seed
+```
+
+Data user default setelah seeding:
+
+| Username           | Password | Role    | Department |
+| ------------------ | -------- | ------- | ---------- |
+| manager_ppic       | password | Manager | PPIC       |
+| manager_production | password | Manager | Production |
+| staff_ppic         | password | Staff   | PPIC       |
+| staff_production   | password | Staff   | Production |
+
+### 6. Build Assets
+
+```bash
+# Development mode
+npm run dev
+
+# Production build
+npm run build
+```
+
+### 7. Jalankan Server
+
+```bash
+# Jalankan Laravel development server
+php artisan serve
+```
+
+Akses aplikasi di: `http://localhost:8000`
+
+**Atau jika menggunakan Laragon**, aplikasi akan otomatis tersedia di:
+`http://technical-test-elitech.test`
+
+## Struktur Akses
+
+### Manager
+
+- ✅ Dapat mengakses menu PPIC dan Production
+- ✅ Dapat menyetujui/menolak rencana produksi (Manager PPIC)
+- ✅ Akses penuh ke semua fitur
+
+### Staff PPIC
+
+- ✅ Menu PPIC (Perencanaan, Daftar Produk)
+- ❌ Tidak dapat mengakses menu Production
+- ✅ Dapat membuat rencana produksi
+- ❌ Tidak dapat menyetujui/menolak rencana
+
+### Staff Production
+
+- ✅ Menu Production (Order Produksi, Riwayat Order)
+- ❌ Tidak dapat mengakses menu PPIC
+- ✅ Dapat memulai dan menyelesaikan produksi
+
+## Tech Stack
+
+### Backend
+
+- Laravel 10.x
+- PHP 8.1+
+- MySQL
+- Inertia.js Server-side
+
+### Frontend
+
+- Vue 3 (Composition API)
+- TypeScript
+- Inertia.js Client-side
+- Bootstrap 5.3.8
+- DataTables.net-vue3
+- SweetAlert2
+- Vite
+
+### Export Libraries
+
+- pdfMake (PDF Export)
+- JSZip (Excel Export)
+- DataTables Buttons Extension
+
+## Command Penting
+
+```bash
+# Clear cache
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Recreate database (hati-hati, akan menghapus semua data)
+php artisan migrate:fresh --seed
+
+# Build untuk production
+npm run build
+
+# Run tests
+php artisan test
+```
+
+## Troubleshooting
+
+### Error: SQLSTATE[HY000] [1045] Access denied
+
+Pastikan konfigurasi database di `.env` sudah benar.
+
+### Error: Vite manifest not found
+
+Jalankan `npm run build` atau pastikan `npm run dev` sedang berjalan.
+
+### DataTables export tidak muncul
+
+Pastikan semua dependencies terinstall dengan `npm install` dan browser sudah di-refresh (Ctrl+Shift+R).
+
+### Pagination tidak rata kanan
+
+Clear browser cache dengan hard reload (Ctrl+Shift+R atau Ctrl+F5).
+
+## Kontak
+
+Untuk pertanyaan atau masalah, hubungi:
+
+- Email: your-email@example.com
+- GitHub: [erickwinz30](https://github.com/erickwinz30)
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Project ini dibuat untuk keperluan technical test dan bersifat open source.
