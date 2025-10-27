@@ -202,7 +202,7 @@ Clear browser cache dengan hard reload (Ctrl+Shift+R atau Ctrl+F5).
 
 Untuk pertanyaan atau masalah, hubungi:
 
-- Email: your-email@example.com
+- Email: erickwinz1008@gmail.com
 - GitHub: [erickwinz30](https://github.com/erickwinz30)
 
 ## License
